@@ -37,6 +37,11 @@ class TaskListController extends Controller
         return view('taskList.index', compact('taskLists'));
     }
 
+    public function show()
+    {
+        return redirect(route('taskLists.index'));
+    }
+
     /**
      * Store a newly created resource in storage.
      */
@@ -46,7 +51,7 @@ class TaskListController extends Controller
         $taskList = TaskList::create($validated);
         $this->user->taskLists()->attach($taskList->id, ['role' => 'admin']);
 
-        return response()->json(['id' => $taskList->id, 'name' => $taskList->name, 'role' => 'admin']);
+        return view('taskList.store')->with('taskList', $taskList);
     }
 
     /**
@@ -72,12 +77,12 @@ class TaskListController extends Controller
             $taskList->delete();
             DB::commit();
 
-            return true;
+            return response()->json(['success' => 'ok']);
         }
         catch (\Throwable $e) {
             DB::rollBack();
 
-            return false;
+            return response()->json(['error' => $e->getMessage()], 500);
         }
     }
 }
