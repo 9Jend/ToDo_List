@@ -22,7 +22,7 @@ class TaskListControllerDeleteTest extends TestCase
             'name' => 'test',
         ]);
 
-        $taskList->users()->attach($user->id, ['role' => 'read']);
+        $taskList->users()->attach($user->id, ['role' => 'Создатель']);
 
         $response = $this->actingAs($user)
                          ->delete(route('taskLists.destroy', $taskList));

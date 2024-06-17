@@ -34,7 +34,7 @@
                             <td>{{ $user->pivot->role }}</td>
                             <td>
                                 @if ($user->id != Auth::user()->id)
-                                    <form action="{{ route('taskLists.detach', $taskList->id) }}" method="post">
+                                    <form action="{{ route('taskLists.detach', $taskList->id) }}" method="post" class="deleteAccessForUsersForm">
                                         @csrf
                                         @method('patch')
                                         <input type="hidden" name="userId" value="{{ $user->id }}">
