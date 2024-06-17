@@ -5,6 +5,10 @@ namespace App\Http\Controllers;
 use App\Models\TaskList;
 use Illuminate\Http\Request;
 use App\Http\Requests\StoreTaskListRequest;
+use App\Http\Requests\UpdateTaskListRequest;
+use App\Http\Requests\DetachTaskListRequest;
+use App\Http\Requests\AttachTaskListRequest;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
 
 
@@ -12,6 +16,10 @@ use Illuminate\Support\Facades\DB;
 class TaskListController extends Controller
 {
     private $user;
+
+    private const TASK_ROLE_ADMIN   = 'Создатель';
+    private const TASK_ROLE_CHANGE  = 'Редактирование';
+    private const TASK_ROLE_READ    = 'Просмотр';
 
     /**
      * Create a new controller instance.
@@ -33,8 +41,56 @@ class TaskListController extends Controller
     public function index()
     {
         $taskLists = $this->user->taskLists()->get();
-
+        foreach($taskLists as $task){
+            if($task->pivot->role !== self::TASK_ROLE_READ)
+                $task->canUpdate = true;
+        }
         return view('taskList.index', compact('taskLists'));
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     */
+    public function edit(TaskList $taskList)
+    {
+        $canEdit = false;
+        $isAdmin = false;
+
+        foreach ($taskList->users as $user) {
+            if ($user->id == $this->user->id) {
+                $canEdit = in_array($user->pivot->role, [self::TASK_ROLE_ADMIN, self::TASK_ROLE_CHANGE]);
+                $isAdmin = $user->pivot->role == self::TASK_ROLE_ADMIN;
+            }
+        }
+
+        if ($canEdit)
+            return view('taskList.edit',
+                [
+                    "taskList" => $taskList,
+                    'isAdmin' => $isAdmin,
+                    'taskRoleChange' => self::TASK_ROLE_CHANGE,
+                    "taskRoleRead" => self::TASK_ROLE_READ
+                ]
+            );
+
+        return redirect(route('taskLists.index'));
+    }
+
+    public function detach(DetachTaskListRequest $request, TaskList $taskList)
+    {
+        $taskList->users()->detach($request->validated()['userId']);
+        return view('taskList.userAccess', ['taskList' => $taskList]);
+    }
+
+    public function attach(AttachTaskListRequest $request, TaskList $taskList)
+    {
+        $taskList->users()->syncWithoutDetaching([$request->validated()['userId'] => ['role' => $request->validated()['userRole']]]);
+        return view('taskList.userAccess', ['taskList' => $taskList]);
+    }
+
+    public function show()
+    {
+        return redirect(route('taskLists.index'));
     }
 
     /**
@@ -44,20 +100,20 @@ class TaskListController extends Controller
     {
         $validated = $request->validated();
         $taskList = TaskList::create($validated);
-        $this->user->taskLists()->attach($taskList->id, ['role' => 'admin']);
+        $this->user->taskLists()->attach($taskList->id, ['role' => self::TASK_ROLE_ADMIN]);
 
-        return response()->json(['id' => $taskList->id, 'name' => $taskList->name, 'role' => 'admin']);
+        return view('taskList.store')->with('taskList', $taskList);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(StoreTaskListRequest $request, TaskList $taskList)
+    public function update(UpdateTaskListRequest $request, TaskList $taskList)
     {
         $validated = $request->validated();
         $taskList->update($validated);
 
-        return true;
+        return redirect(route('taskLists.index'));
     }
 
     /**
@@ -71,13 +127,12 @@ class TaskListController extends Controller
             $taskList->users()->detach();
             $taskList->delete();
             DB::commit();
-
-            return true;
-        }
-        catch (\Throwable $e) {
+            $emptyList = !$this->user->taskLists()->count() > 0;
+            return response()->json(['success' => 'ok', 'emptyList' => $emptyList]);
+        } catch (\Throwable $e) {
             DB::rollBack();
 
-            return false;
+            return response()->json(['error' => $e->getMessage()], 500);
         }
     }
 }

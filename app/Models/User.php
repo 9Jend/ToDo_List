@@ -47,6 +47,6 @@ class User extends Authenticatable
 
     public function taskLists()
     {
-        return $this->belongsToMany(TaskList::class);
+        return $this->belongsToMany(TaskList::class)->withPivot('role');
     }
 }
