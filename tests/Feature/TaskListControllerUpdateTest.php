@@ -28,7 +28,7 @@ class TaskListControllerUpdateTest extends TestCase
         $response = $this->actingAs($user)
                          ->patch(route('taskLists.update', $taskList), ['name' => 'test_update']);
 
-        $response->assertStatus(200);
+        $response->assertStatus(302);
         $this->assertDatabaseHas('task_lists', ['name' => 'test_update']);
     }
 }

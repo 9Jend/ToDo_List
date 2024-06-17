@@ -20,11 +20,12 @@
                         <div class="modal-body">
                             <div class="mb-3">
                                 <label for="nameInput" class="form-label">Название списка</label>
-                                <input type="text" class="form-control" name="name" id="nameInput">
+                                <input type="text" class="form-control" name="name" id="nameInput" required>
                             </div>
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id='createTaskListModalClose'>Закрыть</button>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
+                                id='createTaskListModalClose'>Закрыть</button>
                             <button type="submit" class="btn btn-primary">Сохранить</button>
                         </div>
                     </div>
@@ -34,20 +35,38 @@
 
         <div class="list-group mt-3" id="taskLists">
             @foreach ($taskLists as $taskList)
-                <a href="# {{ $taskList->id }}" class="list-group-item list-group-item-action mt-1 rounded" aria-current="true">
+                <div role="button" onclick="location.href='#';" class="list-group-item list-group-item-action mt-1 rounded"
+                    aria-current="true">
                     <div class="d-flex w-100 justify-content-between align-items-center">
-                        <h5 class="mb-1 w-75">{{ $taskList->name }}</h5>
-                        <small>{{$taskList->created_at}}</small>
-                        <form action="{{ route('taskLists.destroy', $taskList->id) }}" method="post" class="deleteTaskListForm">
-                            @csrf
-                            @method('delete')
-                            <button class="btn btn-link text-decoration-none text-danger hover-overlay">
-                                Удалить
-                            </button>
-                        </form>
+                        <h5 class="col-6">{{ $taskList->name }}</h5>
+                        <div class="col-2">
+                            <small>{{ $taskList->created_at }}</small>
+                        </div>
+                        <div class="col-2">
+                            @if ($taskList->canUpdate)
+                                <a href="{{ route('taskLists.edit', $taskList->id) }}"
+                                    class="btn btn-link text-decoration-none text-primary">
+                                    Редактировать
+                                </a>
+                            @endif
+                        </div>
+                        <div class="col-2">
+                            <form action="{{ route('taskLists.destroy', $taskList->id) }}" method="post"
+                                class="deleteTaskListForm">
+                                @csrf
+                                @method('delete')
+                                <button class="btn btn-link text-decoration-none text-danger hover-overlay">
+                                    Удалить
+                                </button>
+                            </form>
+                        </div>
                     </div>
-                </a>
+                </div>
             @endforeach
         </div>
+
+        <h2 id="emptyList" class="@if (!$taskLists->isEmpty()) visually-hidden @endif">
+            Список элементов пуст
+        </h2>
     </div>
 @endsection

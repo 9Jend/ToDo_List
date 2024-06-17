@@ -16,7 +16,7 @@ class TaskList extends Model
 
     public function users()
     {
-        return $this->belongsToMany(User::class);
+        return $this->belongsToMany(User::class)->withPivot('role')->orderByPivot('role', 'desc');
     }
 
     public function tasks()
