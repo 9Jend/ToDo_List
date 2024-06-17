@@ -102,7 +102,7 @@ class TaskListController extends Controller
         $taskList = TaskList::create($validated);
         $this->user->taskLists()->attach($taskList->id, ['role' => self::TASK_ROLE_ADMIN]);
 
-        return view('taskList.store')->with('taskList', $taskList);
+        return view('taskList.store', ['taskList' => $taskList]);
     }
 
     /**
