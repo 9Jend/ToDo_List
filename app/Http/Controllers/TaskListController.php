@@ -121,6 +121,16 @@ class TaskListController extends Controller
      */
     public function destroy(TaskList $taskList)
     {
+        $users = $taskList->users()->wherePivot('user_id', '=', $this->user->id)->get();
+
+        foreach($users as $user){
+            if($user->pivot->role !== self::TASK_ROLE_ADMIN){
+                $taskList->users()->detach($this->user->id);
+                $emptyList = !$this->user->taskLists()->count() > 0;
+                return response()->json(['success' => 'ok', 'emptyList' => $emptyList]);
+            }
+        }
+
         DB::beginTransaction();
 
         try {
