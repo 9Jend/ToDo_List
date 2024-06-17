@@ -35,7 +35,7 @@
 
         <div class="list-group mt-3" id="taskLists">
             @foreach ($taskLists as $taskList)
-                <div role="button" onclick="location.href='#';" class="list-group-item list-group-item-action mt-1 rounded"
+                <div role="button" onclick="location.href='{{ route('taskLists.tasks.index', $taskList->id) }}';" class="list-group-item list-group-item-action mt-1 rounded"
                     aria-current="true">
                     <div class="d-flex w-100 justify-content-between align-items-center">
                         <h5 class="col-6">{{ $taskList->name }}</h5>
@@ -45,7 +45,7 @@
                         <div class="col-2">
                             @if ($taskList->canUpdate)
                                 <a href="{{ route('taskLists.edit', $taskList->id) }}"
-                                    class="btn btn-link text-decoration-none text-primary">
+                                    class="z-3 btn btn-link text-decoration-none text-primary">
                                     Редактировать
                                 </a>
                             @endif
@@ -55,7 +55,7 @@
                                 class="deleteTaskListForm">
                                 @csrf
                                 @method('delete')
-                                <button class="btn btn-link text-decoration-none text-danger hover-overlay">
+                                <button class="z-3 btn btn-link text-decoration-none text-danger hover-overlay">
                                     Удалить
                                 </button>
                             </form>

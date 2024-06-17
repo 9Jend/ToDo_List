@@ -25,7 +25,7 @@ return new class extends Migration
                 ->references('id')
                 ->on('task_lists')
                 ->onDelete('cascade');
-            $table->string('role');
+            $table->string('role')->default("Просмотр");
             $table->timestamps();
         });
     }
