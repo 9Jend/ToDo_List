@@ -23,6 +23,7 @@ Route::get('/user/search', [App\Http\Controllers\UserController::class, 'searchB
 
 Route::resource('taskLists.tasks', App\Http\Controllers\TaskController::class)->middleware(['auth', 'userRole']);
 
+Route::get('/task/search', [App\Http\Controllers\TaskController::class, 'searchTaskByTag'])->middleware('auth');
 
 Route::get('/', function () {
     return redirect(route('taskLists.index'));

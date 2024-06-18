@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
-use App\Http\Requests\UserSearchRequest;
+use App\Http\Requests\User\UserSearchRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 

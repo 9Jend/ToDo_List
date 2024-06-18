@@ -6,6 +6,7 @@ use App\Models\Task;
 use App\Models\TaskList;
 use App\Models\Tag;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Database\Eloquent\Collection;
 
 class TaskService
 {
@@ -58,6 +59,17 @@ class TaskService
         return $data['photo'] ?? null;
     }
 
+    public function findTaskByTag($data)
+    {
+        $related = new Collection();
+        foreach (auth()->user()->taskLists()->get() as $taskList){
+            foreach($taskList->tasks()->get() as $task){
+                $related = $related->merge($task->tags()->where('name', 'like', '%' . $data['tagName'] . '%')->get());
+            }
+        }
+        return $related;
+    }
+
     private function uploadFile(UploadedFile $photo, $taskListId): string
     {
         $pathToPhoto = null;
@@ -75,7 +87,7 @@ class TaskService
     {
         foreach ($tags as $tag) {
             if (!empty($tag)) {
-                Tag::create([
+                Tag::firstOrCreate([
                     'task_id'   => $taskId,
                     'name'      => $tag,
                 ]);
