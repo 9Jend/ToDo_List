@@ -4,10 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\TaskList;
 use Illuminate\Http\Request;
-use App\Http\Requests\StoreTaskListRequest;
-use App\Http\Requests\UpdateTaskListRequest;
-use App\Http\Requests\DetachTaskListRequest;
-use App\Http\Requests\AttachTaskListRequest;
+use App\Http\Requests\TaskList\StoreTaskListRequest;
+use App\Http\Requests\TaskList\UpdateTaskListRequest;
+use App\Http\Requests\TaskList\DetachTaskListRequest;
+use App\Http\Requests\TaskList\AttachTaskListRequest;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
 
