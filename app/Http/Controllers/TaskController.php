@@ -82,7 +82,7 @@ class TaskController extends Controller
     public function destroy(TaskList $taskList, Task $task)
     {
         $task->delete();
-
+        $task->tags()->delete();
         return response()->json(['success' => 'ok', 'taskId' => $task->id]);
     }
 
