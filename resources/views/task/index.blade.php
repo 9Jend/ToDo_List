@@ -12,8 +12,8 @@
 
         <div class="list-group">
             @foreach ($tasks as $task)
-                <div data-task-id="{{ $task->id }}" class="mt-2 list-group-item list-group-item-action d-flex gap-3 py-3"
-                    aria-current="true">
+                <div role="button" data-task-id="{{ $task->id }}" class="mt-2 list-group-item list-group-item-action d-flex gap-3 py-3 click-link"
+                    aria-current="true" data-href="{{ route('taskLists.tasks.show', ['taskList' => $taskList->id, 'task' => $task->id]) }}">
                     @if ($task->photo)
                         <a class="text-decoration-none" href="{{ $task->photo }}">
                             <img src="{{ $task->photo }}" alt="photo" width="150px" height="150px"
@@ -22,11 +22,10 @@
                     @endif
 
                     <div class="d-flex gap-2 w-100 justify-content-between">
-                        <a href="{{ route('taskLists.tasks.show', ['taskList' => $taskList->id, 'task' => $task->id]) }}"
-                            class="text-decoration-none text-black">
+                        <div>
                             <h6 class="mb-0">{{ $task->name }}</h6>
                             <p class="mb-0 opacity-75 text-truncate text-wrap task-content">{{ $task->content }}</p>
-                        </a>
+                        </div>
                         @if ($canEdit)
                             <div class="d-flex flex-column justify-content-between">
                                 <small class="opacity-50 text-nowrap text-center">{{ $task->created_at }}</small>

@@ -85,3 +85,9 @@ $(document).on("submit", ".deleteTaskListForm", function () {
     });
     return false;
 });
+
+$(document).on("click", ".click-link", function (event) {
+    if (!$(event.target).closest("a, button").length) {
+        location.href=$(this).data('href');
+    }
+})
