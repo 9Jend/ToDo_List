@@ -21,7 +21,7 @@ Route::get('/user/search', [App\Http\Controllers\UserController::class, 'searchB
     ->name('user.search')
     ->middleware('auth');
 
-Route::resource('tasks', App\Http\Controllers\TaskController::class);
+Route::resource('taskLists.tasks', App\Http\Controllers\TaskController::class)->middleware(['auth', 'userRole']);
 
 
 Route::get('/', function () {
