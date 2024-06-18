@@ -30,7 +30,7 @@ class StoreTaskRequest extends FormRequest
             'photo' => 'mimes:jpeg,jpg,png,gif|max:10000',
             'name' => 'required|max:255',
             'content' => 'required|string',
-            'tags' => 'string',
+            'tags' => '',
         ];
     }
 }

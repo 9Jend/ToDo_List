@@ -92,7 +92,7 @@ class TaskController extends Controller
 
         $removePhoto = null;
 
-        if(isset($validate['removePhoto'])){
+        if (isset($validate['removePhoto'])) {
             $removePhoto = $validate['removePhoto'];
             unset($validate['removePhoto']);
         }
@@ -104,24 +104,25 @@ class TaskController extends Controller
             if ($photo->isFile()) {
                 $path = '/taskImage/' . $taskList->id;
                 $fileName = uniqid() . $photo->getClientOriginalName();
-                if ($photo->move(public_path() . $path, $fileName)){
+                if ($photo->move(public_path() . $path, $fileName)) {
                     $validate['photo'] = $path . '/' . $fileName;
-                    if($task->photo)
+                    if ($task->photo)
                         unlink(public_path() . $task->photo);
                 }
             }
         } elseif ($removePhoto && $task->photo) {
-            unlink(public_path().$task->photo);
+            unlink(public_path() . $task->photo);
             $validate['photo'] = null;
         }
 
         $task->tags()->delete();
 
         foreach ($tags as $tag) {
-            Tag::create([
-                'task_id'   => $task->id,
-                'name'      => $tag,
-            ]);
+            if(!empty($tag))
+                Tag::create([
+                    'task_id'   => $task->id,
+                    'name'      => $tag,
+                ]);
         }
 
         $task->update($validate);
