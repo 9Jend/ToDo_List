@@ -6,13 +6,15 @@ use App\Models\Task;
 use App\Models\TaskList;
 use App\Http\Requests\Task\StoreTaskRequest;
 use App\Http\Requests\Task\UpdateTaskRequest;
+use App\Http\Requests\Task\SearchTaskByTagRequest;
 use App\Http\Services\TaskService;
 
 class TaskController extends Controller
 {
     protected $taskService;
 
-    public function __construct(TaskService $taskService) {
+    public function __construct(TaskService $taskService)
+    {
         $this->taskService = $taskService;
     }
 
@@ -82,5 +84,12 @@ class TaskController extends Controller
         $task->delete();
 
         return response()->json(['success' => 'ok', 'taskId' => $task->id]);
+    }
+
+    public function searchTaskByTag(SearchTaskByTagRequest $request)
+    {
+        $founded = $this->taskService->findTaskByTag($request->validated());
+
+        return response()->json($founded);
     }
 }
