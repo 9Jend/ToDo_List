@@ -30,11 +30,13 @@
                             <img src="{{ $task->photo }}" alt="photo" width="150px" height="150px"
                                 class="rounded-circle flex-shrink-0 task-photo d-block" id="oldPhoto">
                         </a>
-                        <input name="removePhoto" class="form-check-input" type="checkbox" value="true"
-                            id="removePhotoCheckbox">
-                        <label class="form-check-label" for="removePhotoCheckbox">
-                            Удалить текущее фото
-                        </label>
+                        <div id="removePhotoContainer">
+                            <input name="removePhoto" class="form-check-input" type="checkbox" value="true"
+                                id="removePhotoCheckbox">
+                            <label class="form-check-label" for="removePhotoCheckbox">
+                                Удалить текущее фото
+                            </label>
+                        </div>
                     </div>
                 </div>
             </div>

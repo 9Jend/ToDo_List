@@ -5,6 +5,9 @@ function readURL(input) {
         reader.onload = function (e) {
             $('#newPhoto').attr('src', e.target.result);
             $('#newPhotoContainer').removeClass('visually-hidden')
+            $("#removePhotoCheckbox").prop('checked', false)
+            if (!$('#removePhotoContainer').hasClass('visually-hidden'))
+                $('#removePhotoContainer').addClass('visually-hidden');
         }
 
         reader.readAsDataURL(input.files[0]);
@@ -28,6 +31,8 @@ $("#editTaskForm").submit(function () {
             $("#successToast").toast("show");
             $("#photoInput").val(null);
             $("#removePhotoCheckbox").prop('checked', false)
+            if ($('#removePhotoContainer').hasClass('visually-hidden'))
+                $('#removePhotoContainer').removeClass('visually-hidden');
             if (response.photo) {
                 $('#oldPhoto').attr('src', response.photo);
                 $('#oldPhotoLink').attr('href', response.photo);
