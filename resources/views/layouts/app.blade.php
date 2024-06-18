@@ -29,6 +29,12 @@
                 <a class="navbar-brand" href="{{ url('/') }}">
                     {{ config('app.name', 'Laravel') }}
                 </a>
+                @auth
+                    <nav class="navbar navbar-light bg-light">
+                        <input id="searchTaskByTag" class="form-control mr-sm-2" type="search" placeholder="Поиск по тегам"
+                            aria-label="Search">
+                    </nav>
+                @endauth
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
                     data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
                     aria-expanded="false" aria-label="{{ __('Переключить навигацию') }}">

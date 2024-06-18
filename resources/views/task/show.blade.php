@@ -29,8 +29,11 @@
                         @endforeach
                     </ul>
                 @endif
-                <a class="link-primary"
-                    href="{{ route('taskLists.tasks.edit', ['taskList' => $taskList->id, 'task' => $task->id]) }}">Редактировать</a>
+                @if ($canEdit)
+                    <a class="link-primary"
+                        href="{{ route('taskLists.tasks.edit', ['taskList' => $taskList->id, 'task' => $task->id]) }}">Редактировать</a>
+                @endif
+
             </div>
         </div>
     </div>

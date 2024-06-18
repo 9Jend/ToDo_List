@@ -63,8 +63,10 @@ class TaskService
     {
         $related = new Collection();
         foreach (auth()->user()->taskLists()->get() as $taskList){
-            foreach($taskList->tasks()->get() as $task){
-                $related = $related->merge($task->tags()->where('name', 'like', '%' . $data['tagName'] . '%')->get());
+            $tasks = $taskList->tasks()->get();
+            foreach($tasks as $task){
+                if($task->tags()->where('name', 'like', '%' . $data['tagName'] . '%')->get()->count() > 0)
+                    $related = $related->add($task);
             }
         }
         return $related;
