@@ -19,7 +19,9 @@ composer install --ignore-platform-reqs
 
 ./vendor/bin/sail artisan key:generate
 
-./vendor/bin/sail npm install && npm run build 
+./vendor/bin/sail npm install 
+
+./vendor/bin/sail npm run build 
 ```
 
 После выполнения данных действий проект будет доступен на локальном хосте.
