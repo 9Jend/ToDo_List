@@ -4,14 +4,18 @@ namespace App\Http\Controllers;
 
 use App\Models\Task;
 use App\Models\TaskList;
-use App\Models\Tag;
-use Illuminate\Http\Request;
 use App\Http\Requests\Task\StoreTaskRequest;
 use App\Http\Requests\Task\UpdateTaskRequest;
-use Illuminate\Support\Facades\Auth;
+use App\Http\Services\TaskService;
 
 class TaskController extends Controller
 {
+    protected $taskService;
+
+    public function __construct(TaskService $taskService) {
+        $this->taskService = $taskService;
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -37,31 +41,9 @@ class TaskController extends Controller
     {
         $validate = $request->validated();
 
-        $tags = preg_split('/[^a-zA-Z0-9]+/', $validate['tags']);
-        unset($validate['tags']);
+        $taskListId = $this->taskService->store($validate);
 
-        if (isset($validate['photo'])) {
-            $photo = $validate['photo'];
-            unset($validate['photo']);
-
-            if ($photo->isFile()) {
-                $path = '/taskImage/' . $validate['task_list_id'];
-                $fileName = uniqid() . $photo->getClientOriginalName();
-                if ($photo->move(public_path() . $path, $fileName))
-                    $validate['photo'] = $path . '/' . $fileName;
-            }
-        }
-
-        $task = Task::create($validate);
-
-        foreach ($tags as $tag) {
-            Tag::create([
-                'task_id'   => $task->id,
-                'name'      => $tag,
-            ]);
-        }
-
-        return redirect(route('taskLists.tasks.index', $validate['task_list_id']));
+        return redirect(route('taskLists.tasks.index', $taskListId));
     }
 
     /**
@@ -87,47 +69,9 @@ class TaskController extends Controller
     {
         $validate = $request->validated();
 
-        $tags = preg_split('/[^a-zA-Z0-9]+/', $validate['tags']);
-        unset($validate['tags']);
+        $photo = $this->taskService->update($taskList, $task, $validate);
 
-        $removePhoto = null;
-
-        if (isset($validate['removePhoto'])) {
-            $removePhoto = $validate['removePhoto'];
-            unset($validate['removePhoto']);
-        }
-
-        if (isset($validate['photo'])) {
-            $photo = $validate['photo'];
-            unset($validate['photo']);
-
-            if ($photo->isFile()) {
-                $path = '/taskImage/' . $taskList->id;
-                $fileName = uniqid() . $photo->getClientOriginalName();
-                if ($photo->move(public_path() . $path, $fileName)) {
-                    $validate['photo'] = $path . '/' . $fileName;
-                    if ($task->photo)
-                        unlink(public_path() . $task->photo);
-                }
-            }
-        } elseif ($removePhoto && $task->photo) {
-            unlink(public_path() . $task->photo);
-            $validate['photo'] = null;
-        }
-
-        $task->tags()->delete();
-
-        foreach ($tags as $tag) {
-            if(!empty($tag))
-                Tag::create([
-                    'task_id'   => $task->id,
-                    'name'      => $tag,
-                ]);
-        }
-
-        $task->update($validate);
-
-        return response()->json(['success' => 'ok', 'photo' => $task->photo]);
+        return response()->json(['success' => 'ok', 'photo' => $photo]);
     }
 
     /**
@@ -136,6 +80,7 @@ class TaskController extends Controller
     public function destroy(TaskList $taskList, Task $task)
     {
         $task->delete();
+
         return response()->json(['success' => 'ok', 'taskId' => $task->id]);
     }
 }
